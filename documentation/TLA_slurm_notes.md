@@ -3,12 +3,13 @@
 
 This are the steps to create a virtual environment and get all the required packages for TLA to run in a SLURM array.
 
-* First initiate an interactive node in the HPC servert. If `mamba` is installed, which is a package manager more efficient than `conda`, load it and create/activate a new environment:
+* First initiate an interactive node in the HPC server and load an anaconda, miniconda or mamba module before creating a virtual environment, and then activate it. __It is advisable to contact the IT administrator of the HPC system to get specific instructions for this step.__ Here is a general set of instructions, but they might be different depending of the configuration of the system. __The user should make the appropiate changes according to the administrators' advice__. 
+* If `mamba` is installed, which is a package manager more efficient than `conda`, load it and create/activate a new environment:
 
 ```
 > interactive
 > module load mamba/latest
-> mamba create --name tlaenv python=3.8
+> mamba create --name tlaenv python=3.10
 > source activate tlaenv
 ```
 
@@ -24,9 +25,12 @@ This are the steps to create a virtual environment and get all the required pack
 * Once `tlaenv` is activated, install pytorch and the rest of the dependencies for TLA:
 
 ```
-> pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-> mamba install -y -c conda-forge pandas matplotlib-base scipy tabulate swifter statannot rasterio openblas geopandas pylandstats 
-> mamba install -y -c anaconda scikit-image statsmodels seaborn pyqt
+> mamba install -y -c torch torchvision torchaudio
+> mamba conda install -y -c conda-forge pandas matplotlib-base scipy tabulate swifter
+> mamba install -y -c conda-forge statannot rasterio openblas geopandas
+> mamba install -y -c conda-forge scikit-image scikit-learn xarray xmltodict
+> mamba install -y -c conda-forge statsmodels seaborn pyqt
+> mamba install -y -c conda-forge pylandstats=3.1.0
 > mamba update --all
 ```
 
