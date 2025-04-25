@@ -307,7 +307,7 @@ TLA scripts can be run directly from python, this is an option when the `bash` o
 * For a single sample with index `{case}` use: 
 
 ```
-> python src/tla_points_setup_sample.py {argument table} {case} [--graph] [--redo]
+> python src/tla_points_setup.py {argument table} {case} [--graph] [--redo]
 ```
 
 * The setup-summary script is done __after__ all samples have been pre-processed:

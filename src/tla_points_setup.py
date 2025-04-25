@@ -2074,14 +2074,14 @@ def main(args):
     """TLA Setup Main."""
     
     # %% STEP 0: start, checks how the program was launched
-    debug = False
+    debug_mode = False
     try:
         args
     except NameError:
-        #  if not running from the CLI, run in debug mode
-        debug = True
+        #  if not running from the CLI, run in debug_mode
+        debug_mode = True
 
-    if debug:
+    if debug_mode:
         # running from the IDE
         import seaborn as sns
         # path of directory containing this script
@@ -2116,14 +2116,14 @@ def main(args):
     
     # tracks time and memory usage
     progress = Progress(slide.sid)
-    progress.dostep(debug, 'Slide object created')
+    progress.dostep(debug_mode, 'Slide object created')
        
     
     # %% STEP 2: loads and format coordinate data for slide
     slide.setup_data()
     slide.filter_class(study)
     
-    if debug:
+    if debug_mode:
         plt.close('all')
         plt.figure()
         sns.scatterplot(data=slide.cell_data, s=1,
@@ -2139,12 +2139,11 @@ def main(args):
         del ax
         
 
-    # STEP 3: load or calculate ROI mask for regions with cells. 
+    # %% STEP 3: load or calculate ROI mask for regions with cells. 
     #            ROIs are large unconnected sections of tissue 
-   
     slide.roi_mask(REDO)
     
-    if debug:
+    if debug_mode:
         plt.close('all')
         plt.figure()
         ext = [0, np.round(slide.imshape[1]*slide.scale, 2),
@@ -2155,14 +2154,14 @@ def main(args):
         ax.set_aspect('equal', adjustable='box')
         del ax
 
-    progress.dostep(debug, 'ROIs loaded')
+    progress.dostep(debug_mode, 'ROIs loaded')
     
     # runtime up to here
     thead = progress.runtime
     print("==> ROI sections detected: " + str(slide.roi_sections))
     
 
-    # STEP 4: for each ROI in the slide, create a new sample
+    # %% STEP 4: for each ROI in the slide, create a new sample
 
     for i, roi in enumerate(slide.roi_sections):
         
@@ -2172,7 +2171,7 @@ def main(args):
         
         # tracks time and memory usage for this sample
         subprogress = Progress(sample.sid, sub=True)
-        subprogress.dostep(debug, 'Sample object created')
+        subprogress.dostep(debug_mode, 'Sample object created')
     
         # if pre-processed files do not exist
         if (REDO or
@@ -2183,7 +2182,7 @@ def main(args):
             # STEP 5: setup coordinate data (pick out sample data)
             sample.setup_data(0)
             
-            if debug:
+            if debug_mode:
                 plt.close('all')
                 plt.figure()
                 sns.scatterplot(data=sample.cell_data, s=1,
@@ -2205,13 +2204,13 @@ def main(args):
                 ax.set_aspect('equal', adjustable='box')
                 del ax
                 
-            subprogress.dostep(debug, 'Cell data formated')
+            subprogress.dostep(debug_mode, 'Cell data formated')
             
                 
             #  STEP 6: raster images from density KDE profiles
             kdearr = sample.kde_arrays(REDO)
             
-            if debug:
+            if debug_mode:
                 plt.close('all')
                 for c, clss in sample.classes.iterrows():
                     plt.figure()
@@ -2222,7 +2221,7 @@ def main(args):
                     ax.set_aspect('equal', adjustable='box')
                     del ax
                     
-            subprogress.dostep(debug, 'KDE calculated')
+            subprogress.dostep(debug_mode, 'KDE calculated')
 
 
             # STEP 7: rasters for cell abundance and mixing profiles
@@ -2230,7 +2229,7 @@ def main(args):
             del kdearr
             gc.collect()
             
-            if debug:
+            if debug_mode:
                 plt.close('all')
                 for c, clss in sample.classes.iterrows():
                     plt.figure()
@@ -2240,7 +2239,7 @@ def main(args):
                     plt.imshow(mixarr[:, :, c], extent=sample.ext)
                     plt.title("Mixing for: " + clss['class_name'])
                     
-            subprogress.dostep(debug, 'ABU-MIX calculated')
+            subprogress.dostep(debug_mode, 'ABU-MIX calculated')
     
 
             #  STEP 8: calculates quadrat populations for coarse graining
@@ -2248,17 +2247,17 @@ def main(args):
             del abuarr
             del mixarr
             gc.collect()
-            subprogress.dostep(debug, 'Quadrat stats calculated')
+            subprogress.dostep(debug_mode, 'Quadrat stats calculated')
 
 
             #  STEP 9: calculate global spacial statistics
             sample.space_stats(REDO, study.dat_path)
-            subprogress.dostep(debug, 'Space stats calculated')
+            subprogress.dostep(debug_mode, 'Space stats calculated')
             
 
             #  STEP 10: saves main data files
             sample.save_data()
-            subprogress.dostep(debug, 'Sample saved')
+            subprogress.dostep(debug_mode, 'Sample saved')
             
 
         #  else
@@ -2266,7 +2265,7 @@ def main(args):
             # STEP 11: if sample is already pre-processed read data
             print(sample.msg + " >>> loading data...")
             sample.load_data()
-            subprogress.dostep(debug, 'Sample loaded')
+            subprogress.dostep(debug_mode, 'Sample loaded')
             
         
         # STEP 12: calculates general stats
@@ -2284,7 +2283,7 @@ def main(args):
                 
             sample.plot_class_landscape_props()
                             
-        subprogress.dostep(debug, 'General stats calculated')
+        subprogress.dostep(debug_mode, 'General stats calculated')
         
 
         # LAST step: saves study stats results for sample
