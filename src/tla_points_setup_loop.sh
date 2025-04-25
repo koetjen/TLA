@@ -10,8 +10,8 @@ ncases=$(($(wc -l < $samples_files) - 1))
 
 echo "TLA_points setup: Processing ($ncases) samples in study <$1>" 
 
-source /opt/anaconda3/etc/profile.d/conda.sh
-conda activate tlaenv
+#source /opt/anaconda3/etc/profile.d/conda.sh
+#conda activate tlaenv
 
 # run all samples in study
 for (( I=0; I<$ncases; I++ ))
